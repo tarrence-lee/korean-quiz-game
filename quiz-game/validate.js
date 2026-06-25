@@ -9,6 +9,7 @@ const files = [
   { file: 'science.json',   expectedCode: 'SC', category: '과학' },
   { file: 'geography.json', expectedCode: 'GE', category: '지리' },
   { file: 'general.json',   expectedCode: 'GN', category: '일반상식' },
+  { file: 'iq.json',        expectedCode: 'IQ', category: '인지능력' },
 ];
 
 let allPass = true;

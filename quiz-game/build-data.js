@@ -6,6 +6,7 @@ const categories = {
   '과학':     'data/science.json',
   '지리':     'data/geography.json',
   '일반상식': 'data/general.json',
+  '인지능력': 'data/iq.json',
 };
 
 const result = {};

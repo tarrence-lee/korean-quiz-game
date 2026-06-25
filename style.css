@@ -89,32 +89,29 @@ body {
 
 .error-msg { color: var(--color-error); font-size: 0.8rem; }
 
-.category-grid {
+.category-display {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  padding: 12px;
+  background: var(--color-bg-muted);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
 }
 
-.cat-btn {
-  padding: 0 10px;
-  height: var(--touch-min);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+.cat-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
   background: var(--color-bg-card);
-  font-size: 0.92rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--color-text-option);
-  cursor: pointer;
-  transition: border-color var(--transition), color var(--transition), background var(--transition);
-  /* 모바일에서 글자 선택 방지 */
-  user-select: none;
-  -webkit-user-select: none;
 }
-.cat-btn:active { transform: scale(0.97); }
-.cat-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-light); }
-.cat-btn.selected,
-.cat-btn[aria-pressed="true"] { border-color: var(--color-primary); color: #fff; background: var(--color-primary); }
-.cat-all { grid-column: 1 / -1; }
 
 /* ── 문제 수 컨트롤 ── */
 .count-control {

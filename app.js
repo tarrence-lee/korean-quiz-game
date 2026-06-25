@@ -3,6 +3,7 @@ const CATEGORY_FILES = {
   '과학':     'data/science.json',
   '지리':     'data/geography.json',
   '일반상식': 'data/general.json',
+  '인지능력': 'data/iq.json',
 };
 const LEADERBOARD_KEY = 'QUIZ_LEADERBOARD';
 const MAX_LB_ENTRIES = 50;
@@ -159,22 +160,7 @@ function initCountControl() {
 function initStartScreen() {
   showScreen('screen-start');
 
-  const catBtns = document.querySelectorAll('.cat-btn');
   state.category = '전체혼합';
-  catBtns.forEach(btn => {
-    const isDefault = btn.dataset.category === '전체혼합';
-    btn.classList.toggle('selected', isDefault);
-    btn.setAttribute('aria-pressed', isDefault ? 'true' : 'false');
-    btn.onclick = () => {
-      catBtns.forEach(b => {
-        b.classList.remove('selected');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('selected');
-      btn.setAttribute('aria-pressed', 'true');
-      state.category = btn.dataset.category;
-    };
-  });
 
   initCountControl();
 
