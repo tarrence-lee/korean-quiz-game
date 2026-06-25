@@ -207,6 +207,41 @@ body {
   transition: width 0.35s ease;
 }
 
+/* ── 타이머 ── */
+#timer-wrap {
+  display: flex;
+  justify-content: center;
+  margin: -4px 0;
+}
+#timer-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: conic-gradient(var(--clr) var(--pct), var(--color-border) 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+#timer-ring::after {
+  content: '';
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: var(--color-bg-card);
+  border-radius: 50%;
+}
+#timer-num {
+  position: relative;
+  z-index: 1;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  min-width: 1.6ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .question {
   font-size: 1.08rem;
   font-weight: 700;

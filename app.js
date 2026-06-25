@@ -32,6 +32,61 @@ const state = {
 // JSON 파일 캐시 (세션 동안 재로드 방지)
 const jsonCache = {};
 
+// ── 타이머 ──────────────────────────────────────────────
+const TIMER_SEC = 10;
+let _timerId = null;
+let _timerSec = TIMER_SEC;
+
+function startTimer() {
+  stopTimer();
+  _timerSec = TIMER_SEC;
+  _renderTimer();
+  _timerId = setInterval(() => {
+    _timerSec--;
+    _renderTimer();
+    if (_timerSec <= 0) {
+      stopTimer();
+      handleTimeout();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (_timerId !== null) {
+    clearInterval(_timerId);
+    _timerId = null;
+  }
+}
+
+function _renderTimer() {
+  const num = document.getElementById('timer-num');
+  const ring = document.getElementById('timer-ring');
+  if (!num || !ring) return;
+  num.textContent = _timerSec;
+  const pct = (_timerSec / TIMER_SEC) * 100;
+  const clr = _timerSec > 6 ? '#22c55e' : _timerSec > 3 ? '#f59e0b' : '#ef4444';
+  ring.style.setProperty('--pct', pct + '%');
+  ring.style.setProperty('--clr', clr);
+}
+
+function handleTimeout() {
+  const q = state.questions[state.currentIndex];
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.value === q.answer) {
+      btn.classList.add('correct');
+      btn.setAttribute('aria-label', btn.getAttribute('aria-label') + ' (정답)');
+    }
+  });
+  const box = document.getElementById('feedback-box');
+  box.className = 'feedback wrong-fb';
+  box.setAttribute('role', 'alert');
+  document.getElementById('feedback-msg').textContent = `⏰ 시간 초과! 정답은 [${q.answer}]입니다.`;
+  document.getElementById('source-text').textContent = `출처: ${q.source}`;
+  document.getElementById('next-btn').classList.remove('hidden');
+  document.getElementById('next-btn').focus();
+}
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -240,6 +295,7 @@ function renderQuestion() {
   progressBar.setAttribute('aria-valuemax', total);
 
   document.getElementById('question-text').textContent = q.question;
+  startTimer();
 
   const optionsEl = document.getElementById('options-container');
   optionsEl.innerHTML = '';
@@ -262,6 +318,7 @@ function renderQuestion() {
 }
 
 function handleAnswer(selected, q) {
+  stopTimer();
   const isCorrect = selected === q.answer;
   if (isCorrect) {
     state.score++;
@@ -298,6 +355,7 @@ function showFeedback(isCorrect, correctAnswer, source) {
 }
 
 function nextQuestion() {
+  stopTimer();
   state.currentIndex++;
   if (state.currentIndex >= state.questions.length) {
     showResult();
