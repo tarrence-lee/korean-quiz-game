@@ -163,7 +163,7 @@ function coverPage() {
     spacer(800),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: '작성일: 2026년 6월 15일', size: 22, color: C.muted })],
+      children: [new TextRun({ text: '작성일: 2026년 6월 25일', size: 22, color: C.muted })],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -185,7 +185,7 @@ function overviewSection() {
     h1('1. 프로젝트 개요'),
     hr(),
     h2('1.1 서비스 소개'),
-    body('한국 일반상식 퀴즈 게임은 한국사, 과학, 지리, 일반상식 4개 카테고리에 걸쳐 총 400문제의 문제은행을 보유한 웹 기반 퀴즈 서비스입니다. 사용자는 카테고리와 문제 수를 직접 설정하여 매 세션마다 다른 문제로 도전할 수 있으며, 즉각적인 피드백과 점수 및 순위를 확인할 수 있습니다.'),
+    body('한국 일반상식 퀴즈 게임은 한국사, 과학, 지리, 일반상식, 인지능력 5개 카테고리에 걸쳐 총 500문제의 문제은행을 보유한 웹 기반 퀴즈 서비스입니다. 사용자는 세션당 출제 문제 수를 직접 설정하여 매 세션마다 다른 문제로 도전할 수 있으며, 즉각적인 피드백과 점수 및 순위를 확인할 수 있습니다. PWA(Progressive Web App)를 지원하여 모바일 홈 화면에 앱처럼 설치할 수 있습니다.'),
     spacer(),
     h2('1.2 핵심 목표'),
     bullet('검증된 출처(국사편찬위원회, 교육부 교육과정 등)의 문제만 수록하여 신뢰성 확보'),
@@ -234,18 +234,36 @@ function techSection() {
         ['data/science.json', '과학 100문제 (SC-001~SC-100)'],
         ['data/geography.json', '지리 100문제 (GE-001~GE-100)'],
         ['data/general.json', '일반상식 100문제 (GN-001~GN-100)'],
-        ['build-data.js', '4개 JSON을 data/questions.js로 번들링하는 Node.js 스크립트'],
+        ['data/iq.json', '인지능력 100문제 (IQ-001~IQ-100)'],
+        ['build-data.js', '5개 JSON을 data/questions.js로 번들링하는 Node.js 스크립트'],
         ['data/questions.js', 'window.__QUIZ_DATA__ 인라인 번들 (file:// 지원용)'],
-        ['validate.js', '400문제 전체 스키마·중복·출처 검증 스크립트'],
+        ['validate.js', '500문제 전체 스키마·중복·출처 검증 스크립트'],
+        ['manifest.json', 'PWA 매니페스트 (앱 이름, 아이콘, 디스플레이 모드)'],
+        ['sw.js', '서비스 워커 (오프라인 캐싱, cache-first 전략)'],
+        ['icons/icon-192.png', 'PWA 홈 화면 아이콘 (192×192)'],
+        ['icons/icon-512.png', 'PWA 스플래시/스토어 아이콘 (512×512)'],
       ],
       [3120, 6240]
     ),
     spacer(),
     h2('2.3 개발 도구'),
-    bullet('로컬 서버: npx serve quiz-game --listen 3001'),
+    bullet('로컬 서버: npx serve . --listen 3001 (루트에서 실행)'),
     bullet('빌드: node build-data.js (JSON → questions.js)'),
     bullet('검증: node validate.js'),
     bullet('배포: GitHub Pages (git push만으로 자동 반영)'),
+    bullet('PWA 아이콘 생성: node icons/gen-png.js'),
+    spacer(),
+    h2('2.4 PWA (Progressive Web App)'),
+    makeTable(
+      ['파일', '역할'],
+      [
+        ['manifest.json', '앱 이름·아이콘·시작 URL·디스플레이 모드 정의'],
+        ['sw.js', '오프라인 캐싱 서비스 워커 (cache-first 전략)'],
+        ['icons/icon-192.png', 'Android 홈 화면 아이콘'],
+        ['icons/icon-512.png', '스플래시 화면 / PWA 스토어 아이콘'],
+      ],
+      [3120, 6240]
+    ),
   ];
 }
 
@@ -257,16 +275,22 @@ function fileSection() {
     makeTable(
       ['경로', '설명'],
       [
-        ['index.html', '진입점. 4개 screen 화면, ARIA 속성, 스크립트 로드'],
+        ['index.html', '진입점. 4개 screen 화면, ARIA 속성, PWA 메타 태그, 서비스 워커 등록'],
         ['app.js', '전체 게임 로직 (상태관리, 문제 로딩, 렌더링, 키보드 단축키)'],
         ['style.css', 'CSS Custom Properties 기반 반응형 스타일시트'],
+        ['manifest.json', 'PWA 매니페스트 (앱 이름, 아이콘, 디스플레이 모드)'],
+        ['sw.js', '서비스 워커 (오프라인 캐싱, cache-first 전략)'],
+        ['icons/icon-192.png', 'PWA 홈 화면 아이콘 (192×192)'],
+        ['icons/icon-512.png', 'PWA 스플래시/스토어 아이콘 (512×512)'],
+        ['icons/gen-png.js', 'PNG 아이콘 생성 스크립트 (Node.js, 외부 의존성 없음)'],
         ['build-data.js', 'JSON 문제은행 → questions.js 번들러 (Node.js)'],
-        ['validate.js', '400문제 전체 스키마 검증기 (Node.js)'],
+        ['validate.js', '500문제 전체 스키마 검증기 (Node.js)'],
         ['data/history.json', '한국사 100문제'],
         ['data/science.json', '과학 100문제'],
         ['data/geography.json', '지리 100문제'],
         ['data/general.json', '일반상식 100문제'],
-        ['data/questions.js', '번들된 전체 문제 데이터 (window.__QUIZ_DATA__)'],
+        ['data/iq.json', '인지능력 100문제 (수열패턴, 언어유추, 논리추론, 수리능력, 공간능력)'],
+        ['data/questions.js', '번들된 전체 문제 데이터 (window.__QUIZ_DATA__, 5개 카테고리 500문제)'],
       ],
       [3120, 6240]
     ),
@@ -280,10 +304,10 @@ function featureSection() {
     hr(),
     h2('4.1 시작 화면'),
     bullet('닉네임 입력 (2자 이상, 최대 12자, ARIA 유효성 표시)'),
-    bullet('카테고리 선택: 한국사 / 과학 / 지리 / 일반상식 / 전체혼합 (기본값: 전체혼합)'),
+    bullet('카테고리 표시: 한국사 / 과학 / 지리 / 일반상식 / 인지능력 — 정적 태그로 표시 (전체혼합 고정)'),
     bullet('카테고리별 문제 수 설정: − / 숫자 입력창 / + 버튼, 범위 1~100 (기본값: 3)'),
-    bullet('subtitle 실시간 업데이트: "카테고리별 N문제씩, 최대 M문제에 도전하세요!"'),
-    bullet('전체혼합 선택 시 카테고리당 N문제씩 × 4 = 최대 4N문제 출제'),
+    bullet('subtitle 실시간 업데이트: "카테고리별 N문제씩, 최대 M문제에 도전하세요!" (M = N × 5)'),
+    bullet('5개 카테고리에서 카테고리당 N문제씩 총 최대 5N문제 출제'),
 
     spacer(),
     h2('4.2 문제 화면'),
@@ -341,12 +365,13 @@ function dataSection() {
         ['과학', 'SC', '100문제', '교육부 과학 교육과정'],
         ['지리', 'GE', '100문제', '교육부 / 국토지리정보원'],
         ['일반상식', 'GN', '100문제', '법령정보센터 / 외교부 등'],
+        ['인지능력', 'IQ', '100문제', '인지능력검사 표준 문항 (수열패턴·언어유추·논리추론·수리능력·공간능력)'],
       ],
       [2340, 1440, 1440, 4140]
     ),
     spacer(),
     h2('5.3 검증 규칙 (validate.js)'),
-    bullet('파일당 정확히 100문제'),
+    bullet('5개 파일, 파일당 정확히 100문제 (총 500문제)'),
     bullet('id 형식: 영문 2자리-숫자 3자리 (예: KH-001)'),
     bullet('파일 내 id 중복 없음 + 전체 파일 간 id 중복 없음'),
     bullet('category 필드가 해당 파일의 카테고리와 일치'),
@@ -477,12 +502,57 @@ function deploySection() {
   ];
 }
 
+function pwaSection() {
+  return [
+    spacer(),
+    h1('9. 모바일 앱 설치 가이드 (PWA)'),
+    hr(),
+    body('이 퀴즈 게임은 PWA(Progressive Web App)를 지원합니다. 별도 앱스토어 없이 브라우저에서 직접 홈 화면에 설치하여 네이티브 앱처럼 사용할 수 있습니다. 설치 후에는 인터넷 없이도 오프라인에서 실행 가능합니다.'),
+    spacer(),
+    h2('9.1 Android (Chrome) 설치 방법'),
+    numbered('Chrome 브라우저에서 tarrence-lee.github.io/korean-quiz-game 접속'),
+    numbered('주소창 오른쪽 끝의 점 세 개(⋮) 메뉴 탭'),
+    numbered('"홈 화면에 추가" 선택'),
+    numbered('"추가" 확인 → 홈 화면에 "상식퀴즈" 아이콘 생성'),
+    numbered('아이콘을 탭하면 전체 화면 앱으로 실행'),
+    spacer(),
+    h2('9.2 iOS (Safari) 설치 방법'),
+    numbered('Safari 브라우저에서 tarrence-lee.github.io/korean-quiz-game 접속'),
+    numbered('하단 툴바의 공유 버튼(□↑) 탭'),
+    numbered('"홈 화면에 추가" 선택'),
+    numbered('이름을 확인하고 "추가" 탭 → 홈 화면에 "상식퀴즈" 아이콘 생성'),
+    numbered('아이콘을 탭하면 Safari 없이 독립 앱으로 실행'),
+    spacer(),
+    h2('9.3 PWA 제공 기능'),
+    makeTable(
+      ['기능', '설명'],
+      [
+        ['오프라인 지원', '최초 방문 후 인터넷 없이도 게임 가능 (Service Worker 캐싱)'],
+        ['홈 화면 아이콘', '파란색 배경 앱 아이콘으로 홈 화면에 설치'],
+        ['전체 화면', '브라우저 주소창 없이 앱처럼 전체 화면 실행 (standalone 모드)'],
+        ['세로 고정', '세로 방향(portrait) 고정으로 최적화된 퀴즈 경험'],
+        ['스플래시 화면', '앱 실행 시 테마 색상(파란색) 배경의 스플래시 화면 표시'],
+      ],
+      [2880, 6480]
+    ),
+    spacer(),
+    h2('9.4 오프라인 캐싱 파일 목록'),
+    body('서비스 워커(sw.js)가 최초 방문 시 다음 파일들을 캐싱합니다:'),
+    bullet('index.html — 메인 HTML'),
+    bullet('app.js — 게임 로직'),
+    bullet('style.css — 스타일시트'),
+    bullet('manifest.json — PWA 매니페스트'),
+    bullet('data/questions.js — 500문제 문제 데이터'),
+    bullet('icons/icon-192.png, icons/icon-512.png — 앱 아이콘'),
+  ];
+}
+
 function appendixSection() {
   return [
     spacer(),
-    h1('9. 부록'),
+    h1('10. 부록'),
     hr(),
-    h2('9.1 등급 기준표'),
+    h2('10.1 등급 기준표'),
     makeTable(
       ['등급', '정답률', '메시지'],
       [
@@ -495,7 +565,7 @@ function appendixSection() {
       [1440, 2340, 5580]
     ),
     spacer(),
-    h2('9.2 주요 개발 이력'),
+    h2('10.2 주요 개발 이력'),
     makeTable(
       ['단계', '내용'],
       [
@@ -508,6 +578,9 @@ function appendixSection() {
         ['추가 4', '모바일 UI 최적화 (48px 터치 타깃, 반응형 레이아웃 재설계)'],
         ['추가 5', '정답 시 0.5초 후 자동 다음 문제 이동'],
         ['배포', 'GitHub Pages 공개 배포 (tarrence-lee.github.io/korean-quiz-game)'],
+        ['추가 6', '인지능력 카테고리 추가 (IQ-001~IQ-100, 수열패턴·언어유추·논리추론·수리능력·공간능력)'],
+        ['추가 7', '카테고리 UI 재설계: 선택 버튼 제거 → 정적 태그 표시 (전체혼합 고정)'],
+        ['추가 8', 'PWA 지원: manifest.json, sw.js, 앱 아이콘(192/512px), 오프라인 캐싱'],
       ],
       [1440, 7920]
     ),
@@ -593,6 +666,7 @@ const doc = new Document({
         ...architectureSection(),
         ...uiSection(),
         ...deploySection(),
+        ...pwaSection(),
         ...appendixSection(),
       ],
     },
