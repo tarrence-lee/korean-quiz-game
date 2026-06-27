@@ -289,7 +289,8 @@ function renderQuestion() {
   const progressEl = document.getElementById('quiz-progress');
   progressEl.textContent = `${idx + 1} / ${total}`;
 
-  const pct = Math.round((idx / total) * 100);
+  // 현재 문항 번호(idx+1) 기준으로 채워 마지막 문제에서 100%에 도달하도록 한다(상단 "N / total" 표기와 일치)
+  const pct = total > 0 ? Math.round(((idx + 1) / total) * 100) : 0;
   const progressBar = document.getElementById('progress-bar');
   progressBar.style.width = `${pct}%`;
   progressBar.setAttribute('aria-valuenow', idx + 1);
@@ -303,7 +304,13 @@ function renderQuestion() {
   shuffle(q.options).forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="num" aria-hidden="true">${i + 1}</span>${opt}`;
+    // 보기 텍스트는 데이터 출처가 신뢰 가능하더라도 방어적으로 textContent로 삽입(XSS 차단)
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.setAttribute('aria-hidden', 'true');
+    num.textContent = i + 1;
+    btn.appendChild(num);
+    btn.appendChild(document.createTextNode(opt));
     btn.dataset.value = opt;
     btn.setAttribute('aria-label', `${i + 1}번: ${opt}`);
     btn.addEventListener('click', () => handleAnswer(opt, q));
@@ -396,13 +403,15 @@ function showResult() {
   const cats = Object.keys(CATEGORY_FILES);
   const activeCats = state.category === '전체혼합' ? cats : [state.category];
 
-  let minScore = Infinity, weakCat = '';
+  let minRate = Infinity, weakCat = '';
   let tableHTML = `<tr><th scope="col">카테고리</th><th scope="col">문제 수</th><th scope="col">점수</th></tr>`;
   activeCats.forEach(cat => {
     const s = state.categoryScores[cat] || 0;
     const cnt = state.questions.filter(q => q.category === cat).length;
     tableHTML += `<tr><td>${cat}</td><td>${cnt}문제</td><td>${s} / ${cnt}</td></tr>`;
-    if (s < minScore) { minScore = s; weakCat = cat; }
+    // 카테고리별 문항 수가 다를 수 있으므로 절대 점수가 아닌 정답률로 취약 카테고리를 판정한다
+    const rate = cnt > 0 ? s / cnt : 1;
+    if (rate < minRate) { minRate = rate; weakCat = cat; }
   });
   document.getElementById('category-table').innerHTML = tableHTML;
 
@@ -455,18 +464,32 @@ function showLeaderboard() {
   const lb = loadLeaderboard();
   const top10 = lb.slice(0, 10);
 
-  let html = `<tr><th scope="col">#</th><th scope="col">닉네임</th><th scope="col">점수</th><th scope="col">날짜</th></tr>`;
+  const table = document.getElementById('leaderboard-table');
+  // 헤더는 정적 문자열이라 안전. 데이터 행은 닉네임(사용자 입력)이 들어가므로
+  // innerHTML 대신 textContent 기반 DOM 생성으로 XSS를 차단한다.
+  table.innerHTML = `<tr><th scope="col">#</th><th scope="col">닉네임</th><th scope="col">점수</th><th scope="col">날짜</th></tr>`;
   top10.forEach((entry, i) => {
     const isMe = entry.nickname === state.nickname && entry.timestamp === state.currentSessionTimestamp;
     const date = new Date(entry.timestamp).toLocaleDateString('ko-KR');
-    html += `<tr class="${isMe ? 'me' : ''}" ${isMe ? 'aria-current="true"' : ''}>
-      <td>${i + 1}</td>
-      <td>${entry.nickname}${isMe ? ' 👈' : ''}</td>
-      <td>${entry.score} / ${entry.total}</td>
-      <td>${date}</td>
-    </tr>`;
+
+    const tr = document.createElement('tr');
+    if (isMe) {
+      tr.className = 'me';
+      tr.setAttribute('aria-current', 'true');
+    }
+
+    const rankTd = document.createElement('td');
+    rankTd.textContent = i + 1;
+    const nameTd = document.createElement('td');
+    nameTd.textContent = entry.nickname + (isMe ? ' 👈' : '');
+    const scoreTd = document.createElement('td');
+    scoreTd.textContent = `${entry.score} / ${entry.total}`;
+    const dateTd = document.createElement('td');
+    dateTd.textContent = date;
+
+    tr.append(rankTd, nameTd, scoreTd, dateTd);
+    table.appendChild(tr);
   });
-  document.getElementById('leaderboard-table').innerHTML = html;
   document.getElementById('retry-btn-lb').onclick = initStartScreen;
 
   document.getElementById('reset-lb-btn').onclick = () => {
@@ -483,7 +506,7 @@ document.addEventListener('keydown', e => {
 
   if (['1', '2', '3', '4'].includes(e.key)) {
     const btns = document.querySelectorAll('.option-btn:not(:disabled)');
-    const target = btns[parseInt(e.key) - 1];
+    const target = btns[parseInt(e.key, 10) - 1];
     if (target) {
       e.preventDefault();
       target.click();
