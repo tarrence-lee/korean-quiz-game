@@ -27,6 +27,7 @@ const state = {
   categoryScores: {},
   currentSessionTimestamp: 0,
   questionCount: 3,
+  advanceTimer: null,
 };
 
 // JSON 파일 캐시 (세션 동안 재로드 방지)
@@ -339,7 +340,11 @@ function handleAnswer(selected, q) {
   showFeedback(isCorrect, q.answer, q.source);
 
   if (isCorrect) {
-    setTimeout(nextQuestion, 500);
+    // 정답이면 0.5초 후 자동으로 다음 문제로 넘어간다.
+    // 이 사이에 Enter/클릭으로 nextQuestion이 중복 실행되어 문제를 건너뛰는 것을 막기 위해
+    // 수동 진행 버튼을 숨기고, 타이머 핸들을 보관해 nextQuestion에서 취소할 수 있게 한다.
+    document.getElementById('next-btn').classList.add('hidden');
+    state.advanceTimer = setTimeout(nextQuestion, 500);
   }
 }
 
@@ -355,6 +360,11 @@ function showFeedback(isCorrect, correctAnswer, source) {
 }
 
 function nextQuestion() {
+  // 정답 자동 진행 타이머가 남아 있으면 취소해 중복 진행(문제 건너뜀)을 방지한다.
+  if (state.advanceTimer) {
+    clearTimeout(state.advanceTimer);
+    state.advanceTimer = null;
+  }
   stopTimer();
   state.currentIndex++;
   if (state.currentIndex >= state.questions.length) {
