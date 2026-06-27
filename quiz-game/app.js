@@ -37,16 +37,25 @@ const jsonCache = {};
 const TIMER_SEC = 10;
 let _timerId = null;
 let _timerSec = TIMER_SEC;
+let _timerActive = false;
+let _timerPaused = false;
 
 function startTimer() {
   stopTimer();
   _timerSec = TIMER_SEC;
+  _timerActive = true;
+  _timerPaused = false;
   _renderTimer();
+  _runTimer();
+}
+
+function _runTimer() {
   _timerId = setInterval(() => {
     _timerSec--;
     _renderTimer();
     if (_timerSec <= 0) {
       stopTimer();
+      _timerActive = false;
       handleTimeout();
     }
   }, 1000);
@@ -59,15 +68,35 @@ function stopTimer() {
   }
 }
 
+// 타이머 버튼 클릭 시 일시정지/재개 토글
+function toggleTimer() {
+  if (!_timerActive) return;
+  if (_timerPaused) {
+    _timerPaused = false;
+    _runTimer();
+  } else {
+    _timerPaused = true;
+    stopTimer();
+  }
+  _renderTimer();
+}
+
 function _renderTimer() {
   const num = document.getElementById('timer-num');
   const ring = document.getElementById('timer-ring');
   if (!num || !ring) return;
-  num.textContent = _timerSec;
+  num.textContent = _timerPaused ? '⏸' : _timerSec;
   const pct = (_timerSec / TIMER_SEC) * 100;
-  const clr = _timerSec > 6 ? '#22c55e' : _timerSec > 3 ? '#f59e0b' : '#ef4444';
+  const clr = _timerPaused
+    ? '#94a3b8'
+    : _timerSec > 6 ? '#22c55e' : _timerSec > 3 ? '#f59e0b' : '#ef4444';
   ring.style.setProperty('--pct', pct + '%');
   ring.style.setProperty('--clr', clr);
+  ring.classList.toggle('paused', _timerPaused);
+  ring.setAttribute('aria-label', _timerActive
+    ? (_timerPaused ? '일시정지됨 — 눌러서 재개' : `남은 시간 ${_timerSec}초 — 눌러서 일시정지`)
+    : '타이머');
+  ring.setAttribute('aria-pressed', String(_timerPaused));
 }
 
 function handleTimeout() {
@@ -327,6 +356,7 @@ function renderQuestion() {
 
 function handleAnswer(selected, q) {
   stopTimer();
+  _timerActive = false;
   const isCorrect = selected === q.answer;
   if (isCorrect) {
     state.score++;
@@ -383,6 +413,7 @@ function nextQuestion() {
 
 function initQuizScreen() {
   document.getElementById('next-btn').onclick = nextQuestion;
+  document.getElementById('timer-ring').onclick = toggleTimer;
 }
 
 // ── 결과 화면 ──────────────────────────────────────────

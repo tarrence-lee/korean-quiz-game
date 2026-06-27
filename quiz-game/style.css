@@ -222,6 +222,24 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+#timer-ring:hover {
+  box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.2);
+}
+#timer-ring:active {
+  transform: scale(0.94);
+}
+#timer-ring:focus-visible {
+  outline: 2px solid var(--clr);
+  outline-offset: 3px;
+}
+#timer-ring.paused {
+  opacity: 0.85;
 }
 #timer-ring::after {
   content: '';
