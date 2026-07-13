@@ -1,2 +1,7 @@
 node_modules/
 *.docx
+
+# 시크릿 — 절대 커밋 금지 (CLAUDE.md 보안 규칙)
+.env
+.env.*
+!.env.example

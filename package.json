@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/tarrence-lee/korean-quiz-game#readme",
   "dependencies": {
-    "docx": "^9.7.1"
+    "@supabase/supabase-js": "^2.110.3",
+    "docx": "^9.7.1",
+    "dotenv": "^17.4.2"
   }
 }
