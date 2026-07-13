@@ -96,7 +96,7 @@
   {"id":"IQ-095","category":"인지능력","level":"중학교","question":"ABCABC 패턴에서 10번째 오는 글자는?","options":["A","B","C","D"],"answer":"A","source":"인지능력검사 표준 문항"},
   {"id":"IQ-096","category":"인지능력","level":"중학교","question":"●○●○●○ 패턴에서 9번째 오는 도형은?","options":["●","○","▲","■"],"answer":"●","source":"인지능력검사 표준 문항"},
   {"id":"IQ-097","category":"인지능력","level":"고등학교","question":"어떤 두 자리 수의 십의 자리와 일의 자리를 바꾸면 원래 수보다 27이 커진다. 두 자리의 차이는?","options":["2","3","4","5"],"answer":"3","source":"인지능력검사 표준 문항"},
-  {"id":"IQ-098","category":"인지능력","level":"고등학교","question":"A는 B보다 빠르고, C는 A보다 느리고, D는 C보다 빠르다. 가장 빠른 사람은?","options":["A","B","C","D"],"answer":"B","source":"인지능력검사 표준 문항"},
+  {"id":"IQ-098","category":"인지능력","level":"고등학교","question":"A는 B보다 빠르고, B는 C보다 빠르고, D는 A보다 느리다. 가장 빠른 사람은?","options":["A","B","C","D"],"answer":"A","source":"인지능력검사 표준 문항"},
   {"id":"IQ-099","category":"인지능력","level":"고등학교","question":"사탕 12개를 3명이 2:3:1 비율로 나누면 가장 많이 받는 사람은 몇 개를 받는가?","options":["3개","4개","5개","6개"],"answer":"6개","source":"인지능력검사 표준 문항"},
   {"id":"IQ-100","category":"인지능력","level":"고등학교","question":"참 또는 거짓으로만 답하는 문제에서 5문제를 임의로 맞힐 때 모두 맞힐 확률은?","options":["1/8","1/16","1/32","1/64"],"answer":"1/32","source":"인지능력검사 표준 문항"}
 ]
